@@ -1,0 +1,986 @@
+/* =====================================================
+   FLYMASTER AIRLINES — Folha de estilos principal
+   Projeto: Reserva de Voos | Programação 2
+   ===================================================== */
+
+
+/* =====================================================
+   VARIÁVEIS GLOBAIS
+   Cores, sombras e medidas usadas em todo o site.
+   Alterar aqui afeta o tema inteiro.
+   ===================================================== */
+:root {
+    --bg: #e2e2e2;                              /* Fundo geral da página */
+    --surface: #ffffff;                          /* Fundo de cards e painéis */
+    --surface-alt: #dadada;                      /* Fundo alternativo (sidebars, extras) */
+    --text: #1a2a3a;                             /* Cor principal do texto */
+    --muted: #5a6e7c;                            /* Texto secundário / cinzento */
+    --primary: #1e5a8a;                          /* Cor principal (azul escuro) */
+    --primary-hover: #144a6e;                    /* Hover da cor principal */
+    --accent: #2c7cb6;                           /* Cor de destaque (azul médio) */
+    --accent-hover: #23689b;
+    --success-bg: #e3f2fd;                       /* Fundo badge "Confirmada" */
+    --success-text: #0d5b8a;
+    --warning-bg: #fff3e0;                       /* Fundo badge "Pendente" */
+    --warning-text: #b85c00;
+    --info-bg: #e8f0fe;                          /* Fundo badge "Concluído" */
+    --info-text: #1e5a8a;
+    --border: #cbd5e1;                           /* Cor das bordas e separadores */
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);   /* Sombra padrão */
+    --radius: 14px;                              /* Borda arredondada grande */
+    --radius-sm: 10px;                           /* Borda arredondada pequena */
+    --max-width: 1200px;                         /* Largura máxima do conteúdo */
+}
+
+
+/* =====================================================
+   RESET GLOBAL
+   Remove margens e padding padrão do browser.
+   ===================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* Centra o conteúdo e limita a largura máxima */
+.container {
+    width: min(100% - 2rem, var(--max-width));
+    margin: 0 auto;
+}
+
+
+/* =====================================================
+   HEADER / NAVEGAÇÃO
+   Barra superior fixa com o logo e links de navegação.
+   ===================================================== */
+.site-header {
+    background: var(--primary);
+    color: white;
+    position: sticky; /* Fica no topo ao fazer scroll */
+    top: 0;
+    z-index: 100;     /* Fica por cima de todo o conteúdo */
+    box-shadow: var(--shadow);
+}
+
+/* Linha interior do header: logo à esquerda, nav à direita */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Logo / nome da empresa */
+.brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.brand-mark {
+    font-size: 1.8rem;
+}
+
+.brand-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.brand-subtitle {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+/* Links de navegação no header */
+.main-nav {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.main-nav a,
+.nav-pill {
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 40px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    background: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+}
+
+/* Pill destacado (ex: label "Admin") */
+.nav-pill {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Botão "Conta" com ícone */
+.account-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: 40px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.account-icon:hover {
+    background: rgba(255, 255, 255, 0.25);
+    text-decoration: none;
+}
+
+
+/* =====================================================
+   HERO (secção principal da homepage)
+   Card com o formulário de pesquisa de voos.
+   ===================================================== */
+.hero {
+    padding: 2rem 0;
+}
+
+.hero-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.hero-content {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero-content h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero-content p {
+    color: var(--muted);
+}
+
+/* Seletor Ida / Ida e Volta */
+.trip-type-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+}
+
+.trip-btn {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text);
+    display: inline-block;
+}
+
+.trip-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+
+/* =====================================================
+   FORMULÁRIOS
+   Grelha de pesquisa, inputs, selects e botões.
+   ===================================================== */
+
+/* Grelha responsiva para campos de pesquisa */
+.search-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Estilos base para inputs, selects e textareas */
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(30, 90, 138, 0.1);
+}
+
+.textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.search-actions {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+
+/* =====================================================
+   BOTÕES
+   Variantes: primary (azul), light (cinzento), accent,
+   large, small e back.
+   ===================================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    text-decoration: none;
+}
+
+.btn-light {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-light:hover {
+    background: #e0e4e9;
+    text-decoration: none;
+}
+
+.btn-accent {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-accent:hover {
+    background: var(--accent-hover);
+    text-decoration: none;
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Botão "← Voltar" com animação lateral */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: var(--surface-alt);
+    border-color: var(--primary);
+    color: var(--primary-hover);
+    text-decoration: none;
+    transform: translateX(-2px);
+}
+
+.btn-back svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+
+/* =====================================================
+   SECÇÕES GENÉRICAS (homepage)
+   ===================================================== */
+.section {
+    padding: 2rem 0;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.section-note {
+    color: var(--muted);
+}
+
+
+/* =====================================================
+   DESTINOS POPULARES (homepage)
+   Grelha de 4 cards com imagem + info.
+   ===================================================== */
+.destinations-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.destination-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.destination-card:hover {
+    transform: translateY(-4px);
+}
+
+.destination-image {
+    width: 100%;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Gradientes de fallback caso a imagem não carregue */
+.destination-image.paris  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.destination-image.london { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.destination-image.madrid { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.destination-image.rome   { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+.destination-info {
+    padding: 1rem;
+}
+
+.destination-info h3 {
+    margin-bottom: 0.3rem;
+}
+
+.destination-info p {
+    color: var(--primary);
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+}
+
+
+/* =====================================================
+   FEATURES (homepage)
+   Grelha de 3 cards com ícone + texto.
+   ===================================================== */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.feature-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.feature-card h3 { margin-bottom: 0.5rem; }
+.feature-card p  { color: var(--muted); font-size: 0.9rem; }
+
+
+/* =====================================================
+   LISTA DE VOOS (flights.html)
+   Cada voo aparece como um card horizontal.
+   ===================================================== */
+.flights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.flight-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.flight-info    { flex: 2; }
+.flight-airline { font-weight: bold; color: var(--primary); margin-bottom: 0.5rem; }
+
+.flight-route {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.flight-point        { text-align: center; }
+.flight-point strong { display: block; font-size: 1.1rem; }
+.flight-point span   { font-size: 0.85rem; color: var(--muted); }
+.flight-arrow        { font-size: 1.2rem; color: var(--muted); }
+
+.flight-duration,
+.flight-seats {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+}
+
+.flight-price {
+    text-align: center;
+    min-width: 120px;
+}
+
+.price-value  { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+.price-detail { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.8rem; }
+
+
+/* =====================================================
+   PAINEL DE PESQUISA (flights.html)
+   Formulário de filtro no topo da lista de voos.
+   ===================================================== */
+.search-panel {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+/* Resumo da pesquisa ativa (ex: "Lisboa → Paris • 2 voos") */
+.search-summary {
+    background: var(--surface-alt);
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* =====================================================
+   RESERVA (booking.html)
+   Layout em duas colunas: formulário + sidebar de preço.
+   ===================================================== */
+.booking-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px; /* Formulário | Sidebar */
+    gap: 1.5rem;
+    padding: 2rem 0;
+}
+
+.booking-main    { display: flex; flex-direction: column; gap: 1.5rem; }
+.booking-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+
+/* =====================================================
+   PAINEL / CARD GENÉRICO
+   Usado em quase todas as páginas.
+   ===================================================== */
+.panel {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.panel h2,
+.panel h3 {
+    margin-bottom: 1rem;
+}
+
+/* Tabela de resumo do voo (label: valor) */
+.flight-summary { display: flex; flex-direction: column; gap: 0.8rem; }
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.summary-label { font-weight: 500; color: var(--muted); }
+.summary-value { font-weight: 500; }
+
+
+/* =====================================================
+   RESUMO DE PREÇO (sidebar da reserva)
+   ===================================================== */
+.price-summary {
+    background: var(--surface-alt);
+    border-radius: var(--radius);
+    padding: 1rem;
+}
+
+.price-summary h3 { margin-bottom: 1rem; }
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Linha do total em destaque */
+.price-row.total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-bottom: none;
+    padding-top: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+/* Caixa de extras opcionais */
+.extras-box          { background: var(--surface-alt); border-radius: var(--radius); padding: 1rem; }
+.extras-box h3       { margin-bottom: 0.8rem; }
+.checkbox-label      { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0; cursor: pointer; }
+
+
+/* =====================================================
+   FORMULÁRIO DE PASSAGEIROS
+   Grelha de 2 colunas para campos lado a lado.
+   ===================================================== */
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Card de passageiro adicional */
+.passenger-card {
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.passenger-card h3 {
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+
+/* =====================================================
+   DASHBOARD (conta do cliente e painel admin)
+   Layout em duas colunas: sidebar + conteúdo.
+   ===================================================== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sidebar fixa | Conteúdo flexível */
+    gap: 1.5rem;
+    padding: 2rem 0;
+}
+
+.sidebar {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    align-self: start; /* Não estica verticalmente */
+}
+
+.sidebar h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.sidebar-nav a {
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: var(--surface-alt);
+    text-decoration: none;
+}
+
+.content-stack { display: flex; flex-direction: column; gap: 1.5rem; }
+
+
+/* =====================================================
+   ESTATÍSTICAS (painel admin)
+   Grelha de 4 cards com número em destaque.
+   ===================================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.stats-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.stats-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+.stats-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+
+
+/* =====================================================
+   TABELAS DE DADOS
+   Usadas no painel admin e listas de passageiros/reservas.
+   ===================================================== */
+.table-wrap  { overflow-x: auto; margin-top: 1rem; }
+
+.data-table  { width: 100%; border-collapse: collapse; }
+
+.data-table th,
+.data-table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table th             { background: var(--surface-alt); font-weight: 600; }
+.data-table tr:hover td    { background: rgba(0, 0, 0, 0.02); }
+
+
+/* =====================================================
+   BADGES DE STATUS
+   Etiquetas coloridas: Confirmada, Pendente, Concluído.
+   ===================================================== */
+.status-badge {
+    display: inline-flex;
+    padding: 0.3rem 0.8rem;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-available { background: var(--success-bg); color: var(--success-text); } /* Confirmada */
+.status-pending   { background: var(--warning-bg); color: var(--warning-text); } /* Pendente/Cancelada */
+.status-info      { background: var(--info-bg);    color: var(--info-text);    } /* Concluído */
+
+
+/* =====================================================
+   CARDS DE RESERVA (conta do cliente)
+   ===================================================== */
+.booking-card {
+    background: var(--surface-alt);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.booking-card:last-child { margin-bottom: 0; }
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.booking-code    { font-weight: bold; font-family: monospace; }
+
+.booking-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.booking-details p { margin: 0; font-size: 0.9rem; }
+.booking-actions   { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+
+/* =====================================================
+   AUTENTICAÇÃO (login.html)
+   Card centrado com formulário de login e registo.
+   ===================================================== */
+.auth-wrap { padding: 3rem 0; }
+
+.auth-card {
+    max-width: 450px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.auth-card h1 { margin-bottom: 0.5rem; }
+.auth-card p  { color: var(--muted); margin-bottom: 1.5rem; }
+
+.form-grid    { display: flex; flex-direction: column; gap: 1rem; }
+.form-actions { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
+
+
+/* =====================================================
+   PAGINAÇÃO
+   Controlos de navegação entre páginas nas listas.
+   ===================================================== */
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.page-btn:hover {
+    background: var(--surface-alt);
+    text-decoration: none;
+}
+
+.page-btn-active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   UTILITÁRIOS
+   Classes reutilizáveis em qualquer template.
+   ===================================================== */
+hr           { margin: 1.5rem 0; border: none; border-top: 1px solid var(--border); }
+.page-actions{ display: flex; gap: 0.8rem; margin-bottom: 1rem; }
+.center      { text-align: center; }
+.muted       { color: var(--muted); }
+
+
+/* =====================================================
+   FOOTER
+   Barra inferior com informações da empresa.
+   ===================================================== */
+.site-footer {
+    background: var(--surface-alt);
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+}
+
+.footer-inner {
+    padding: 1.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+
+/* =====================================================
+   RESPONSIVO — Tablets (≤ 1024px)
+   ===================================================== */
+@media (max-width: 1024px) {
+    /* Passa de 4/3 colunas para 2 */
+    .destinations-grid,
+    .feature-grid,
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Reserva: sidebar passa para baixo do formulário */
+    .booking-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Dashboard: sidebar passa para cima do conteúdo */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVO — Mobile (≤ 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Tudo numa coluna */
+    .destinations-grid,
+    .feature-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Card de voo empilhado verticalmente */
+    .flight-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .flight-route { justify-content: center; }
+
+    .form-row-2  { grid-template-columns: 1fr; }
+    .search-grid { grid-template-columns: 1fr; }
+
+    .hero-card        { padding: 1.5rem; }
+    .hero-content h1  { font-size: 1.5rem; }
+    .header-actions   { justify-content: center; }
+
+    .container { width: min(100% - 1rem, var(--max-width)); }
+    .main-nav  { justify-content: center; }
+
+    .trip-type-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .trip-btn { text-align: center; }
+
+    /* Botões de ação em linha horizontal com scroll */
+    .page-actions {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        border-radius: var(--radius);
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .btn-sm       { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+    .btn-primary  { background-color: var(--primary); color: white; }
+    .btn-light    { background-color: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+
+    /* Dropdown do painel admin */
+    .dropdown { position: relative; display: inline-block; }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: var(--surface);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+        padding: 0.5rem 0;
+        z-index: 10;
+        min-width: 200px;
+    }
+
+    .dropdown-menu .dropdown-item {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-align: left;
+        color: var(--text);
+        text-decoration: none;
+        cursor: pointer;
+        background: none;
+        border: none;
+        width: 100%;
+        font-size: 0.875rem;
+    }
+
+    .dropdown-menu .dropdown-item:hover,
+    .dropdown:hover .dropdown-menu,
+    .dropdown-menu.show {
+        background-color: var(--surface-alt);
+        display: block;
+    }
+}

@@ -1,0 +1,18 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | Remover voo{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:500px; margin-top:2rem;">
+    <div class="panel">
+        <h2>Confirmar remoção</h2>
+        <p style="margin:1rem 0;">Tem a certeza que pretende remover o voo <strong>{{ object.numero }}</strong>?</p>
+        <p class="muted">{{ object.origem.cidade }} → {{ object.destino.cidade }} | {{ object.data_partida|date:"d/m/Y H:i" }}</p>
+        <p style="color:#e53e3e; margin-top:0.5rem; font-size:0.9rem;">⚠️ Esta ação não pode ser desfeita e irá remover todas as reservas associadas.</p>
+        <form method="post" style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Sim, remover</button>
+            <a href="{% url 'voos:admin-panel' %}" class="btn btn-light">Cancelar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}

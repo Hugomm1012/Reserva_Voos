@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FlyMaster Airlines{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container topbar">
+            <a href="{% url 'voos:index' %}" class="brand" style="text-decoration:none; color:white;">
+                <span class="brand-title">FlyMaster Airlines</span>
+                <span class="brand-subtitle">
+                    {% if user.is_authenticated %}Olá, {{ user.username }}{% else %}Reserve o seu próximo voo{% endif %}
+                </span>
+            </a>
+            <nav class="main-nav">
+                <a href="{% url 'voos:flights' %}">Voos</a>
+                {% if user.is_authenticated %}
+                    {% if is_gestor %}
+                        <a href="{% url 'voos:admin-panel' %}">Admin</a>
+                    {% endif %}
+                    <a href="{% url 'voos:account' %}" class="account-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span>Conta</span>
+                    </a>
+                    <form method="post" action="{% url 'voos:logout' %}" style="display:inline; margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" style="background:none; border:none; color:white; cursor:pointer; font-size:inherit; padding:0.5rem 1rem;">Sair</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'voos:login' %}" class="account-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span>Entrar / Registar</span>
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <span>✈️ FlyMaster Airlines</span>
+            <span>{% block footer_text %}Reservas sujeitas a disponibilidade{% endblock %}</span>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/nav.js' %}"></script>
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

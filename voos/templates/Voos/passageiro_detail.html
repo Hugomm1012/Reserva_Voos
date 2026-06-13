@@ -1,0 +1,23 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | {{ passageiro.nome }}{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:600px; margin-top:2rem;">
+    <div class="page-actions" style="margin-bottom:1rem;">
+        <a href="{% url 'voos:passageiro-list' %}" class="btn btn-light">← Voltar</a>
+    </div>
+    <div class="panel">
+        <h2>{{ passageiro.nome }}</h2>
+        <div class="flight-summary" style="margin-top:1rem;">
+            <div class="summary-row"><span class="summary-label">E-mail:</span><span class="summary-value">{{ passageiro.email }}</span></div>
+            <div class="summary-row"><span class="summary-label">Telefone:</span><span class="summary-value">{{ passageiro.telefone }}</span></div>
+            <div class="summary-row"><span class="summary-label">Documento:</span><span class="summary-value">{{ passageiro.documento }}</span></div>
+            <div class="summary-row"><span class="summary-label">Registado em:</span><span class="summary-value">{{ passageiro.data_criacao|date:"d/m/Y" }}</span></div>
+        </div>
+        <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+            <a href="{% url 'voos:passageiro-update' passageiro.pk %}" class="btn btn-light">Editar</a>
+            <a href="{% url 'voos:passageiro-delete' passageiro.pk %}" class="btn btn-light">Remover</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

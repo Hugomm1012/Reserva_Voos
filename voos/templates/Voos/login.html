@@ -1,0 +1,64 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Login{% endblock %}
+{% block footer_text %}Atendimento 24h | Política de privacidade{% endblock %}
+
+{% block content %}
+<!-- Login e registo | VoosLoginView (/login/) + RegisterView (/registar/)
+     Dois formulários no mesmo template: {{ form }} para autenticação e
+     {{ register_form }} para criar conta. Cada um faz POST para a sua URL. -->
+<main class="auth-wrap">
+    <div class="container">
+        <div class="auth-card">
+            <h1>Acesso à sua conta</h1>
+            <p>Faça login para gerir as suas reservas e voos.</p>
+
+            <form class="form-grid" method="post" action="{% url 'voos:login' %}">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p style="color:#e53e3e; font-size:0.85rem; margin-top:0.25rem;">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                <div style="color:#e53e3e; background:#fff5f5; padding:0.75rem; border-radius:6px; border:1px solid #feb2b2;">
+                    {{ form.non_field_errors|join:", " }}
+                </div>
+                {% endif %}
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit" style="width:100%;">Entrar</button>
+                </div>
+            </form>
+
+            <hr style="margin:1.5rem 0;">
+
+            <h3>Ainda não tem conta?</h3>
+            <p class="muted" style="margin-bottom:1rem; font-size:0.9rem;">Registe-se para fazer as suas reservas.</p>
+
+            <form class="form-grid" method="post" action="{% url 'voos:register' %}">
+                {% csrf_token %}
+                {% for field in register_form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p style="color:#e53e3e; font-size:0.85rem; margin-top:0.25rem;">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                    {% if field.help_text %}
+                    <p style="color:#718096; font-size:0.8rem; margin-top:0.2rem;">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <button class="btn btn-light" type="submit" style="width:100%;">Criar conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Voos disponíveis{% endblock %}
+
+{% block content %}
+<!-- Lista de voos | VooListView → /voos/
+     Recebe da view: "voos" (queryset filtrado), e os parâmetros GET
+     origin/destination/date/passengers para repreencher o formulário. -->
+<main class="container">
+    <div class="section-header" style="margin:1.5rem 0;">
+        <h1>Voos disponíveis</h1>
+    </div>
+
+    <!-- Painel de filtros: envia GET para a mesma URL -->
+    <div class="search-panel">
+        <form class="flight-search-form" action="{% url 'voos:flights' %}" method="get">
+            <div class="search-grid">
+                <div class="form-group">
+                    <label>✈️ Origem</label>
+                    <input type="text" class="input" name="origin" value="{{ origin }}" placeholder="Cidade ou aeroporto">
+                </div>
+                <div class="form-group">
+                    <label>📍 Destino</label>
+                    <input type="text" class="input" name="destination" value="{{ destination }}" placeholder="Cidade ou aeroporto">
+                </div>
+                <div class="form-group">
+                    <label>📅 Data</label>
+                    <input type="date" class="input" name="date" value="{{ date }}">
+                </div>
+                <div class="form-group">
+                    <label>👥 Passageiros</label>
+                    <select class="select" name="passengers">
+                        <option value="1" {% if passengers == "1" %}selected{% endif %}>1 passageiro</option>
+                        <option value="2" {% if passengers == "2" %}selected{% endif %}>2 passageiros</option>
+                        <option value="3" {% if passengers == "3" %}selected{% endif %}>3 passageiros</option>
+                        <option value="4" {% if passengers == "4" %}selected{% endif %}>4 passageiros</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button type="submit" class="btn btn-primary">🔍 Pesquisar voos</button>
+                <a href="{% url 'voos:flights' %}" class="btn btn-light">Limpar filtros</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Resumo dos filtros ativos -->
+    {% if origin or destination or date %}
+    <div class="search-summary" style="display:flex; gap:1rem; flex-wrap:wrap; margin:1rem 0; color:#4a5568; font-size:0.95rem;">
+        {% if origin and destination %}<span>{{ origin }} → {{ destination }}</span>
+        {% elif origin %}<span>De: {{ origin }}</span>
+        {% elif destination %}<span>Para: {{ destination }}</span>
+        {% endif %}
+        {% if date %}<span>• {{ date }}</span>{% endif %}
+        <span>• {{ paginator.count }} voo{{ paginator.count|pluralize:",s" }} encontrado{{ paginator.count|pluralize:",s" }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Lista de voos -->
+    <div class="flights-list" style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
+        {% if voos %}
+            {% for voo in voos %}
+            <div class="flight-card">
+                <div class="flight-info">
+                    <div class="flight-airline">{{ voo.companhia.nome }} • {{ voo.numero }}</div>
+                    <div class="flight-route">
+                        <div class="flight-point">
+                            <strong>{{ voo.origem.cidade }} ({{ voo.origem.codigo }})</strong>
+                            <span>{{ voo.data_partida|date:"H:i" }}</span>
+                        </div>
+                        <div class="flight-arrow">→</div>
+                        <div class="flight-point">
+                            <strong>{{ voo.destino.cidade }} ({{ voo.destino.codigo }})</strong>
+                            <span>{{ voo.data_chegada|date:"H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="flight-duration">{{ voo.data_partida|date:"d/m/Y" }}</div>
+                    <div class="flight-seats" {% if voo.lugares_disponiveis <= 10 %}style="color:orange;"{% endif %}>
+                        Lugares disponíveis: {{ voo.lugares_disponiveis }}
+                        {% if voo.lugares_disponiveis <= 10 %}⚠️ Últimos lugares!{% endif %}
+                    </div>
+                </div>
+                <div class="flight-price">
+                    <div class="price-value">{{ voo.preco }}€</div>
+                    <div class="price-detail">por pessoa</div>
+                    <a href="{% url 'voos:booking' voo.numero %}" class="btn btn-primary btn-sm">Selecionar</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted" style="text-align:center; padding:2rem;">
+                {% if origin or destination or date %}
+                    Não foram encontrados voos para os critérios selecionados.
+                {% else %}
+                    Não existem voos disponíveis de momento.
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+    {% include 'Voos/_pagination.html' %}
+</main>
+{% endblock %}

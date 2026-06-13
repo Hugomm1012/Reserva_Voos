@@ -1,0 +1,106 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Finalizar reserva{% endblock %}
+{% block footer_text %}Reserva sujeita a confirmação{% endblock %}
+
+{% block content %}
+<!-- Finalização de reserva | BookingView → /reservar/<numero>/ -->
+<main class="container">
+    <div class="page-actions" style="margin-bottom:1rem;">
+        <a href="{% url 'voos:flights' %}" class="btn btn-light">← Voltar aos voos</a>
+    </div>
+
+    {% if errors %}
+    <div style="background:#fff5f5; border:1px solid #feb2b2; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+        <strong style="color:#c53030;">Corrija os seguintes erros:</strong>
+        <ul style="margin:0.5rem 0 0 1.2rem; color:#c53030;">
+            {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'voos:booking' voo.numero %}">
+        {% csrf_token %}
+        <div class="booking-grid">
+
+            <div class="booking-main">
+                <!-- Resumo do voo -->
+                <div class="panel">
+                    <h2>Detalhes do voo</h2>
+                    <div class="flight-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">Voo:</span>
+                            <span class="summary-value">{{ voo.companhia.nome }} {{ voo.numero }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Rota:</span>
+                            <span class="summary-value">{{ voo.origem.cidade }} ({{ voo.origem.codigo }}) → {{ voo.destino.cidade }} ({{ voo.destino.codigo }})</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Data:</span>
+                            <span class="summary-value">{{ voo.data_partida|date:"d \de F \de Y" }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Horário:</span>
+                            <span class="summary-value">Partida {{ voo.data_partida|date:"H:i" }} • Chegada {{ voo.data_chegada|date:"H:i" }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Lugares disponíveis:</span>
+                            <span class="summary-value">{{ voo.lugares_disponiveis }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados do passageiro -->
+                <div class="panel">
+                    <h2>Dados do passageiro</h2>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Nome completo *</label>
+                            <input type="text" class="input" name="nome" value="{{ nome|default:'' }}" placeholder="Como no documento" required>
+                        </div>
+                        <div class="form-group">
+                            <label>NIF / Documento *</label>
+                            <input type="text" class="input" name="documento" value="{{ documento|default:'' }}" placeholder="Número de identificação" required>
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>E-mail *</label>
+                            <input type="email" class="input" name="email" value="{{ email|default:user.email }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telemóvel *</label>
+                            <input type="tel" class="input" name="telefone" value="{{ telefone|default:'' }}" placeholder="+351 912 345 678" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Número do assento *</label>
+                        <input type="text" class="input" name="numero_assento" value="{{ numero_assento|default:'' }}" placeholder="Ex: 14A" required style="max-width:150px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar: resumo de preço -->
+            <div class="booking-sidebar">
+                <div class="price-summary">
+                    <h3>Resumo do preço</h3>
+                    <div class="price-row"><span>Voo (1 passageiro)</span><span>{{ voo.preco }}€</span></div>
+                    <div class="price-row"><span>Taxas de aeroporto</span><span>Incluído</span></div>
+                    <div class="price-row total"><span>Total</span><span>{{ voo.preco }}€</span></div>
+                </div>
+                <div class="extras-box" style="margin-top:1rem;">
+                    <h3>Extras</h3>
+                    <label class="checkbox-label"><input type="checkbox"> Bagagem porão (+25€/pessoa)</label>
+                    <label class="checkbox-label"><input type="checkbox"> Seguro de viagem (+15€/pessoa)</label>
+                    <label class="checkbox-label"><input type="checkbox"> Escolha de lugar (+8€/pessoa)</label>
+                    <label class="checkbox-label"><input type="checkbox"> Refeição a bordo (+12€/pessoa)</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large" style="margin-top:1rem; width:100%;">✅ Confirmar reserva</button>
+            </div>
+
+        </div>
+    </form>
+</main>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Minhas reservas{% endblock %}
+{% block footer_text %}Gestão de reservas{% endblock %}
+
+{% block content %}
+<!-- Área pessoal | AccountView → /conta/ -->
+<main class="container dashboard-grid">
+
+    <aside class="sidebar">
+        <h2>Minha área</h2>
+        <nav class="sidebar-nav">
+            <a class="active" href="#" data-section="reservas">Reservas</a>
+            <a href="#" data-section="dados">Dados pessoais</a>
+        </nav>
+    </aside>
+
+    <div class="content-stack">
+        <section class="panel">
+            <h1>Bem-vindo, {{ user.username }}</h1>
+            <p class="muted">Aqui pode gerir as suas reservas e consultar o histórico de voos.</p>
+        </section>
+
+        <!-- Secção de reservas (visível por defeito) -->
+        <section class="panel" id="section-reservas">
+            <h2>As suas reservas</h2>
+            {% if reservas %}
+                {% for reserva in reservas %}
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <span class="booking-code">✈️ Reserva #{{ reserva.pk }}</span>
+                        <span class="status-badge
+                            {% if reserva.status == 'confirmada' %}status-available
+                            {% elif reserva.status == 'cancelada' %}status-pending
+                            {% else %}status-info{% endif %}">
+                            {{ reserva.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="booking-details">
+                        <p><strong>{{ reserva.voo.companhia.nome }} • {{ reserva.voo.numero }}</strong></p>
+                        <p>{{ reserva.voo.origem.cidade }} ({{ reserva.voo.origem.codigo }}) → {{ reserva.voo.destino.cidade }} ({{ reserva.voo.destino.codigo }})</p>
+                        <p>Partida: {{ reserva.voo.data_partida|date:"d/m/Y \à\s H:i" }}</p>
+                        <p>Chegada: {{ reserva.voo.data_chegada|date:"d/m/Y \à\s H:i" }}</p>
+                        <p>Passageiro: {{ reserva.passageiro.nome }}</p>
+                        <p>Lugar: {{ reserva.numero_assento }}</p>
+                        <p>Preço: {{ reserva.voo.preco }}€</p>
+                    </div>
+                    {% if reserva.status != 'cancelada' %}
+                    <div class="booking-actions">
+                        <a href="{% url 'voos:reserva-delete' reserva.pk %}" class="btn btn-light btn-sm">Cancelar reserva</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="muted">
+                    Não tem reservas de momento.
+                    <a href="{% url 'voos:flights' %}">Pesquise um voo</a> para começar.
+                </p>
+            {% endif %}
+        </section>
+
+        <!-- Secção de dados pessoais (escondida por defeito) -->
+        <section class="panel" id="section-dados" style="display:none;">
+            <h2>Dados pessoais</h2>
+            <p><strong>Nome de utilizador:</strong> {{ user.username }}</p>
+            <p><strong>E-mail:</strong> {{ user.email|default:"Não definido" }}</p>
+            <hr style="margin:1rem 0;">
+            <p class="muted">Para alterar os seus dados de acesso, utilize o painel de administração Django.</p>
+        </section>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const sidebarLinks    = document.querySelectorAll('.sidebar-nav a');
+    const sectionReservas = document.getElementById('section-reservas');
+    const sectionDados    = document.getElementById('section-dados');
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            if (this.dataset.section === 'dados') {
+                sectionReservas.style.display = 'none';
+                sectionDados.style.display    = 'block';
+            } else {
+                sectionDados.style.display    = 'none';
+                sectionReservas.style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | Voo {{ voo.numero }}{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:600px; margin-top:2rem;">
+    <div class="page-actions" style="margin-bottom:1rem;">
+        <a href="{% url 'voos:flights' %}" class="btn btn-light">← Voltar aos voos</a>
+    </div>
+    <div class="panel">
+        <h2>Voo {{ voo.numero }}</h2>
+        <div class="flight-summary" style="margin-top:1rem;">
+            <div class="summary-row"><span class="summary-label">Companhia:</span><span class="summary-value">{{ voo.companhia.nome }}</span></div>
+            <div class="summary-row"><span class="summary-label">Origem:</span><span class="summary-value">{{ voo.origem.cidade }} ({{ voo.origem.codigo }})</span></div>
+            <div class="summary-row"><span class="summary-label">Destino:</span><span class="summary-value">{{ voo.destino.cidade }} ({{ voo.destino.codigo }})</span></div>
+            <div class="summary-row"><span class="summary-label">Partida:</span><span class="summary-value">{{ voo.data_partida|date:"d/m/Y H:i" }}</span></div>
+            <div class="summary-row"><span class="summary-label">Chegada:</span><span class="summary-value">{{ voo.data_chegada|date:"d/m/Y H:i" }}</span></div>
+            <div class="summary-row"><span class="summary-label">Lugares disponíveis:</span><span class="summary-value">{{ voo.lugares_disponiveis }}</span></div>
+            <div class="summary-row"><span class="summary-label">Preço:</span><span class="summary-value">{{ voo.preco }}€</span></div>
+        </div>
+        <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+            <a href="{% url 'voos:booking' voo.numero %}" class="btn btn-primary">Reservar</a>
+            {% if is_gestor %}
+            <a href="{% url 'voos:voo-update' voo.numero %}" class="btn btn-light">Editar</a>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}

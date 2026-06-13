@@ -1,0 +1,29 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | {% if form.instance.pk %}Editar reserva{% else %}Nova reserva{% endif %}{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:600px; margin-top:2rem;">
+    <div class="page-actions" style="margin-bottom:1rem;">
+        <a href="{% url 'voos:reserva-list' %}" class="btn btn-light">← Voltar</a>
+    </div>
+    <div class="panel">
+        <h2>{% if form.instance.pk %}Editar reserva #{{ form.instance.pk }}{% else %}Nova reserva{% endif %}</h2>
+        <form method="post" class="form-grid" style="margin-top:1rem;">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p style="color:#e53e3e; font-size:0.85rem;">{{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="form-actions" style="margin-top:1rem;">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="{% url 'voos:reserva-list' %}" class="btn btn-light">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

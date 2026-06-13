@@ -1,0 +1,21 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | Cancelar reserva{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:500px; margin-top:2rem;">
+    <div class="panel">
+        <h2>Confirmar cancelamento</h2>
+        <p style="margin:1rem 0;">Tem a certeza que pretende cancelar a reserva <strong>#{{ object.pk }}</strong>?</p>
+        <p class="muted">
+            Voo {{ object.voo.numero }} — {{ object.voo.origem.cidade }} → {{ object.voo.destino.cidade }}<br>
+            Passageiro: {{ object.passageiro.nome }}<br>
+            Assento: {{ object.numero_assento }}
+        </p>
+        <form method="post" style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Sim, cancelar reserva</button>
+            <a href="{% url 'voos:account' %}" class="btn btn-light">Voltar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}

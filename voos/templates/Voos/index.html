@@ -1,0 +1,177 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Reserva de Voos{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Hero: formulário de pesquisa -->
+    <section class="hero">
+        <div class="container hero-card">
+            <div class="hero-content">
+                <h1>Pesquise o seu próximo destino</h1>
+                <p>Encontre os melhores preços para voos nacionais e internacionais.</p>
+            </div>
+
+            <div class="search-container">
+                <div class="trip-type-selector">
+                    <button type="button" class="trip-btn active" id="btn-ida">🔄 Ida</button>
+                    <button type="button" class="trip-btn" id="btn-volta">🔄 Ida e Volta</button>
+                </div>
+
+                <form class="flight-search-form" action="{% url 'voos:flights' %}" method="get" id="search-form">
+                    <input type="hidden" name="trip_type" id="trip_type" value="ida">
+                    <div class="search-grid">
+                        <div class="form-group">
+                            <label>✈️ Origem</label>
+                            <input type="text" class="input" name="origin" placeholder="Cidade ou aeroporto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📍 Destino</label>
+                            <input type="text" class="input" name="destination" placeholder="Cidade ou aeroporto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📅 Data de ida</label>
+                            <input type="date" class="input" name="depart_date" required>
+                        </div>
+                        <div class="form-group" id="return-date-group" style="display:none;">
+                            <label>📅 Data de volta</label>
+                            <input type="date" class="input" name="return_date">
+                        </div>
+                        <div class="form-group">
+                            <label>👥 Passageiros</label>
+                            <select class="select" name="passengers">
+                                <option value="1">1 passageiro</option>
+                                <option value="2">2 passageiros</option>
+                                <option value="3">3 passageiros</option>
+                                <option value="4">4 passageiros</option>
+                                <option value="5">5+ passageiros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>🪑 Classe</label>
+                            <select class="select" name="class">
+                                <option value="economy">Económica</option>
+                                <option value="premium">Premium Económica</option>
+                                <option value="business">Executiva</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button type="submit" class="btn btn-primary btn-large">🔍 Pesquisar voos</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinos populares -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Destinos populares</h2>
+                <p class="section-note">Os destinos mais procurados pelos nossos passageiros</p>
+            </div>
+            <div class="destinations-grid">
+                <div class="destination-card">
+                    <img src="{% static 'images/paris.jpg' %}" alt="Vista de Paris" class="destination-image" onerror="this.style.display='none'">
+                    <div class="destination-info">
+                        <h3>Paris</h3>
+                        <p>Desde €89</p>
+                        <a href="{% url 'voos:flights' %}?destination=Paris" class="btn btn-light btn-sm">Ver voos</a>
+                    </div>
+                </div>
+                <div class="destination-card">
+                    <img src="{% static 'images/london.jpg' %}" alt="Vista de Londres" class="destination-image" onerror="this.style.display='none'">
+                    <div class="destination-info">
+                        <h3>Londres</h3>
+                        <p>Desde €75</p>
+                        <a href="{% url 'voos:flights' %}?destination=Londres" class="btn btn-light btn-sm">Ver voos</a>
+                    </div>
+                </div>
+                <div class="destination-card">
+                    <img src="{% static 'images/madrid.jpg' %}" alt="Vista de Madrid" class="destination-image" onerror="this.style.display='none'">
+                    <div class="destination-info">
+                        <h3>Madrid</h3>
+                        <p>Desde €45</p>
+                        <a href="{% url 'voos:flights' %}?destination=Madrid" class="btn btn-light btn-sm">Ver voos</a>
+                    </div>
+                </div>
+                <div class="destination-card">
+                    <img src="{% static 'images/rome.jpg' %}" alt="Vista de Roma" class="destination-image" onerror="this.style.display='none'">
+                    <div class="destination-info">
+                        <h3>Roma</h3>
+                        <p>Desde €99</p>
+                        <a href="{% url 'voos:flights' %}?destination=Roma" class="btn btn-light btn-sm">Ver voos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Melhor preço garantido</h3>
+                    <p>Encontrou mais barato? Devolvemos a diferença.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Cancelamento gratuito</h3>
+                    <p>Cancelamento sem custos até 24h antes do voo.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎫</div>
+                    <h3>Check-in online</h3>
+                    <p>Faça o check-in pelo site até 48h antes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="depart_date"]').min = today;
+    document.querySelector('input[name="return_date"]').min = today;
+
+    const tripBtns = document.querySelectorAll('.trip-btn');
+    const returnDateGroup = document.getElementById('return-date-group');
+
+    tripBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            tripBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const isRoundTrip = this.textContent.includes('Volta');
+            returnDateGroup.style.display = isRoundTrip ? 'block' : 'none';
+            if (!isRoundTrip) document.querySelector('input[name="return_date"]').value = '';
+        });
+    });
+
+    document.querySelector('.flight-search-form').addEventListener('submit', function(e) {
+        const origin = document.querySelector('input[name="origin"]').value.trim();
+        const destination = document.querySelector('input[name="destination"]').value.trim();
+        const departDate = document.querySelector('input[name="depart_date"]').value;
+        const returnDate = document.querySelector('input[name="return_date"]').value;
+        const isRoundTrip = document.querySelector('.trip-btn.active').textContent.includes('Volta');
+
+        if (!origin || !destination) { e.preventDefault(); alert('Por favor, preencha a origem e o destino.'); return; }
+        if (origin.toLowerCase() === destination.toLowerCase()) { e.preventDefault(); alert('A origem e o destino não podem ser iguais.'); return; }
+        if (!departDate) { e.preventDefault(); alert('Por favor, selecione a data de ida.'); return; }
+        if (isRoundTrip && !returnDate) { e.preventDefault(); alert('Por favor, selecione a data de volta.'); return; }
+        if (isRoundTrip && returnDate && returnDate < departDate) { e.preventDefault(); alert('A data de volta tem de ser igual ou posterior à data de ida.'); return; }
+    });
+
+    document.querySelector('input[name="depart_date"]').addEventListener('change', function() {
+        const returnInput = document.querySelector('input[name="return_date"]');
+        returnInput.min = this.value;
+        if (returnInput.value && returnInput.value < this.value) returnInput.value = '';
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'Voos/base.html' %}
+{% block title %}FlyMaster | Remover passageiro{% endblock %}
+
+{% block content %}
+<main class="container" style="max-width:500px; margin-top:2rem;">
+    <div class="panel">
+        <h2>Confirmar remoção</h2>
+        <p style="margin:1rem 0;">Tem a certeza que pretende remover o passageiro <strong>{{ object.nome }}</strong>?</p>
+        <p class="muted">{{ object.email }} | Documento: {{ object.documento }}</p>
+        <p style="color:#e53e3e; font-size:0.9rem; margin-top:0.5rem;">⚠️ Todas as reservas associadas serão removidas.</p>
+        <form method="post" style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Sim, remover</button>
+            <a href="{% url 'voos:passageiro-list' %}" class="btn btn-light">Cancelar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}

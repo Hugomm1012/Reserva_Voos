@@ -1,0 +1,168 @@
+{% extends 'Voos/base.html' %}
+{% load static %}
+
+{% block title %}FlyMaster | Admin{% endblock %}
+{% block footer_text %}Painel administrativo{% endblock %}
+
+{% block content %}
+<!-- Painel de administração | AdminPanelView → /admin-painel/
+     Só para gestores/superusers. Três secções geridas por JS:
+     Dashboard, Voos e Reservas. -->
+<main class="container dashboard-grid">
+
+    <aside class="sidebar">
+        <h2>Gestão</h2>
+        <nav class="sidebar-nav">
+            <a class="active" href="#" data-section="dashboard">Dashboard</a>
+            <a href="#" data-section="flights">Voos</a>
+            <a href="#" data-section="reservations">Reservas</a>
+        </nav>
+    </aside>
+
+    <div class="content-stack">
+
+        <!-- Dashboard: estatísticas -->
+        <section id="section-dashboard">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <div class="stats-label">Voos hoje</div>
+                    <div class="stats-value">{{ voos_hoje }}</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">Reservas ativas</div>
+                    <div class="stats-value">{{ reservas_ativas }}</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">Total passageiros</div>
+                    <div class="stats-value">{{ total_passageiros }}</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">Check-in pendente</div>
+                    <div class="stats-value">{{ checkin_pendente }}</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Voos: tabela CRUD -->
+        <section id="section-flights" class="panel" style="display:none;">
+            <h2>Gestão de voos</h2>
+            <div class="page-actions" style="margin-bottom:1rem;">
+                <a href="{% url 'voos:voo-create' %}" class="btn btn-primary btn-sm">+ Adicionar voo</a>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Voo</th><th>Companhia</th><th>Origem</th>
+                            <th>Destino</th><th>Partida</th><th>Lugares</th>
+                            <th>Preço</th><th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voo in todos_voos %}
+                        <tr>
+                            <td>{{ voo.numero }}</td>
+                            <td>{{ voo.companhia.nome }}</td>
+                            <td>{{ voo.origem.cidade }}</td>
+                            <td>{{ voo.destino.cidade }}</td>
+                            <td>{{ voo.data_partida|date:"d/m/Y H:i" }}</td>
+                            <td>{{ voo.lugares_disponiveis }}</td>
+                            <td>{{ voo.preco }}€</td>
+                            <td>
+                                <a href="{% url 'voos:voo-update' voo.numero %}" class="btn btn-light btn-sm">Editar</a>
+                                <a href="{% url 'voos:voo-delete' voo.numero %}" class="btn btn-light btn-sm">Remover</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="8" class="muted">Sem voos registados. <a href="{% url 'voos:voo-create' %}">Adicionar o primeiro voo</a>.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reservas: confirmar / cancelar -->
+        <section id="section-reservations" style="display:none;">
+            <div class="panel">
+                <h2>Reservas pendentes</h2>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Data reserva</th><th>Ação</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for reserva in reservas_pendentes %}
+                            <tr>
+                                <td>{{ reserva.passageiro.nome }}</td>
+                                <td>{{ reserva.voo.numero }}</td>
+                                <td>{{ reserva.voo.origem.codigo }} → {{ reserva.voo.destino.codigo }}</td>
+                                <td>{{ reserva.numero_assento }}</td>
+                                <td>{{ reserva.data_reserva|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'voos:reserva-confirm' reserva.pk %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-sm">Confirmar</button>
+                                    </form>
+                                    <form method="post" action="{% url 'voos:reserva-cancel' reserva.pk %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-light btn-sm">Cancelar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="muted">Sem reservas pendentes.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top:1rem;">
+                <h2>Reservas confirmadas</h2>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Partida</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for reserva in reservas_confirmadas %}
+                            <tr>
+                                <td>{{ reserva.passageiro.nome }}</td>
+                                <td>{{ reserva.voo.numero }}</td>
+                                <td>{{ reserva.voo.origem.codigo }} → {{ reserva.voo.destino.codigo }}</td>
+                                <td>{{ reserva.numero_assento }}</td>
+                                <td>{{ reserva.voo.data_partida|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="muted">Sem reservas confirmadas.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+    const sections = {
+        dashboard:    document.getElementById('section-dashboard'),
+        flights:      document.getElementById('section-flights'),
+        reservations: document.getElementById('section-reservations'),
+    };
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            Object.values(sections).forEach(s => s.style.display = 'none');
+            sections[this.dataset.section].style.display = 'block';
+        });
+    });
+</script>
+{% endblock %}
