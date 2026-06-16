@@ -11,8 +11,8 @@
     <aside class="sidebar">
         <h2>Minha área</h2>
         <nav class="sidebar-nav">
-            <a class="active" href="#" data-section="reservas">Reservas</a>
-            <a href="#" data-section="dados">Dados pessoais</a>
+            <a {% if not show_dados %}class="active"{% endif %} href="#" data-section="reservas">Reservas</a>
+            <a {% if show_dados %}class="active"{% endif %} href="#" data-section="dados">Dados pessoais</a>
         </nav>
     </aside>
 
@@ -23,7 +23,7 @@
         </section>
 
         <!-- Secção de reservas (visível por defeito) -->
-        <section class="panel" id="section-reservas">
+        <section class="panel" id="section-reservas" {% if show_dados %}style="display:none;"{% endif %}>
             <h2>As suas reservas</h2>
             {% if reservas %}
                 {% for reserva in reservas %}
@@ -44,6 +44,7 @@
                         <p>Chegada: {{ reserva.voo.data_chegada|date:"d/m/Y \à\s H:i" }}</p>
                         <p>Passageiro: {{ reserva.passageiro.nome }}</p>
                         <p>Lugar: {{ reserva.numero_assento }}</p>
+                        <p>Classe: {{ reserva.get_classe_voo_display }}</p>
                         <p>Preço: {{ reserva.voo.preco }}€</p>
                     </div>
                     {% if reserva.status != 'cancelada' %}
@@ -62,12 +63,68 @@
         </section>
 
         <!-- Secção de dados pessoais (escondida por defeito) -->
-        <section class="panel" id="section-dados" style="display:none;">
+        <section class="panel" id="section-dados" {% if not show_dados %}style="display:none;"{% endif %}>
             <h2>Dados pessoais</h2>
             <p><strong>Nome de utilizador:</strong> {{ user.username }}</p>
-            <p><strong>E-mail:</strong> {{ user.email|default:"Não definido" }}</p>
+
+            {% if dados_errors %}
+            <div style="background:#fff5f5; border:1px solid #feb2b2; border-radius:8px; padding:1rem; margin:1rem 0;">
+                <ul style="margin:0 0 0 1.2rem; color:#c53030;">
+                    {% for error in dados_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% if dados_success %}
+            <div style="background:#f0fff4; border:1px solid #9ae6b4; border-radius:8px; padding:1rem; margin:1rem 0; color:#2f855a;">
+                {{ dados_success }}
+            </div>
+            {% endif %}
+
             <hr style="margin:1rem 0;">
-            <p class="muted">Para alterar os seus dados de acesso, utilize o painel de administração Django.</p>
+
+            <div class="summary-row">
+                <span><strong>E-mail:</strong> {{ user.email|default:"Não definido" }}</span>
+                <button type="button" id="btn-toggle-email" class="btn btn-light btn-sm">Alterar e-mail</button>
+            </div>
+
+            <form method="post" action="{% url 'voos:account' %}" id="form-email" class="form-row-2" style="align-items:end; {% if not show_email_form %}display:none;{% endif %} margin-top:1rem;">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="update_email">
+                <div class="form-group">
+                    <label>Novo e-mail</label>
+                    <input type="email" class="input" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Guardar e-mail</button>
+                </div>
+            </form>
+
+            <hr style="margin:1rem 0;">
+
+            <div class="summary-row">
+                <span><strong>Password</strong></span>
+                <button type="button" id="btn-toggle-password" class="btn btn-light btn-sm">Alterar password</button>
+            </div>
+
+            <form method="post" action="{% url 'voos:account' %}" id="form-password" style="{% if not show_password_form %}display:none;{% endif %} margin-top:1rem;">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="change_password">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Password atual</label>
+                        <input type="password" class="input" name="old_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nova password</label>
+                        <input type="password" class="input" name="new_password1" required>
+                    </div>
+                </div>
+                <div class="form-group" style="max-width:300px;">
+                    <label>Confirmar nova password</label>
+                    <input type="password" class="input" name="new_password2" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Alterar password</button>
+            </form>
         </section>
     </div>
 </main>
@@ -93,5 +150,15 @@
             }
         });
     });
+
+    function toggleForm(buttonId, formId, visibleDisplay) {
+        const btn  = document.getElementById(buttonId);
+        const form = document.getElementById(formId);
+        btn.addEventListener('click', function() {
+            form.style.display = (form.style.display === 'none') ? visibleDisplay : 'none';
+        });
+    }
+    toggleForm('btn-toggle-email', 'form-email', 'grid');
+    toggleForm('btn-toggle-password', 'form-password', 'block');
 </script>
 {% endblock %}

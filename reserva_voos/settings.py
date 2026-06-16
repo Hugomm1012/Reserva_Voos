@@ -6,8 +6,10 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# Valor por defeito para quem clonar o repositório sem criar um .env próprio
+# (ex: correção do professor, Codespaces). Em produção, definir sempre SECRET_KEY no .env.
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-apenas-para-avaliacao-academica')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 

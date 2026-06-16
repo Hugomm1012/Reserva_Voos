@@ -32,7 +32,7 @@
                         </div>
                         <div class="form-group">
                             <label>📅 Data de ida</label>
-                            <input type="date" class="input" name="depart_date" required>
+                            <input type="date" class="input" name="date" required>
                         </div>
                         <div class="form-group" id="return-date-group" style="display:none;">
                             <label>📅 Data de volta</label>
@@ -137,7 +137,7 @@
 {% block scripts %}
 <script>
     const today = new Date().toISOString().split('T')[0];
-    document.querySelector('input[name="depart_date"]').min = today;
+    document.querySelector('input[name="date"]').min = today;
     document.querySelector('input[name="return_date"]').min = today;
 
     const tripBtns = document.querySelectorAll('.trip-btn');
@@ -157,7 +157,7 @@
     document.querySelector('.flight-search-form').addEventListener('submit', function(e) {
         const origin = document.querySelector('input[name="origin"]').value.trim();
         const destination = document.querySelector('input[name="destination"]').value.trim();
-        const departDate = document.querySelector('input[name="depart_date"]').value;
+        const departDate = document.querySelector('input[name="date"]').value;
         const returnDate = document.querySelector('input[name="return_date"]').value;
         const isRoundTrip = document.querySelector('.trip-btn.active').textContent.includes('Volta');
 
@@ -168,7 +168,7 @@
         if (isRoundTrip && returnDate && returnDate < departDate) { e.preventDefault(); alert('A data de volta tem de ser igual ou posterior à data de ida.'); return; }
     });
 
-    document.querySelector('input[name="depart_date"]').addEventListener('change', function() {
+    document.querySelector('input[name="date"]').addEventListener('change', function() {
         const returnInput = document.querySelector('input[name="return_date"]');
         returnInput.min = this.value;
         if (returnInput.value && returnInput.value < this.value) returnInput.value = '';

@@ -16,6 +16,7 @@
 
             <form class="form-grid" method="post" action="{% url 'voos:login' %}">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
                 {% for field in form %}
                 <div>
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -42,6 +43,7 @@
 
             <form class="form-grid" method="post" action="{% url 'voos:register' %}">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
                 {% for field in register_form %}
                 <div>
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>

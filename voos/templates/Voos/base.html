@@ -47,6 +47,16 @@
         </div>
     </header>
 
+    {% if messages %}
+    <div class="container" style="margin-top:1rem;">
+        {% for message in messages %}
+        <div style="background:#f0fff4; border:1px solid #9ae6b4; border-radius:8px; padding:1rem; margin-bottom:0.75rem; color:#2f855a;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
 
     <footer class="site-footer">

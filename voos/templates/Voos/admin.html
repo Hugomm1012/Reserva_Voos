@@ -88,7 +88,7 @@
                 <div class="table-wrap">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Data reserva</th><th>Ação</th></tr>
+                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Classe</th><th>Data reserva</th><th>Ação</th></tr>
                         </thead>
                         <tbody>
                             {% for reserva in reservas_pendentes %}
@@ -97,6 +97,7 @@
                                 <td>{{ reserva.voo.numero }}</td>
                                 <td>{{ reserva.voo.origem.codigo }} → {{ reserva.voo.destino.codigo }}</td>
                                 <td>{{ reserva.numero_assento }}</td>
+                                <td>{{ reserva.get_classe_voo_display }}</td>
                                 <td>{{ reserva.data_reserva|date:"d/m/Y H:i" }}</td>
                                 <td>
                                     <form method="post" action="{% url 'voos:reserva-confirm' reserva.pk %}" style="display:inline;">
@@ -110,7 +111,7 @@
                                 </td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="6" class="muted">Sem reservas pendentes.</td></tr>
+                            <tr><td colspan="7" class="muted">Sem reservas pendentes.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -122,7 +123,7 @@
                 <div class="table-wrap">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Partida</th></tr>
+                            <tr><th>Passageiro</th><th>Voo</th><th>Rota</th><th>Assento</th><th>Classe</th><th>Partida</th></tr>
                         </thead>
                         <tbody>
                             {% for reserva in reservas_confirmadas %}
@@ -131,10 +132,11 @@
                                 <td>{{ reserva.voo.numero }}</td>
                                 <td>{{ reserva.voo.origem.codigo }} → {{ reserva.voo.destino.codigo }}</td>
                                 <td>{{ reserva.numero_assento }}</td>
+                                <td>{{ reserva.get_classe_voo_display }}</td>
                                 <td>{{ reserva.voo.data_partida|date:"d/m/Y H:i" }}</td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="5" class="muted">Sem reservas confirmadas.</td></tr>
+                            <tr><td colspan="6" class="muted">Sem reservas confirmadas.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>

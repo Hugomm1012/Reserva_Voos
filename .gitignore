@@ -20,10 +20,8 @@ media/
 # Variáveis de ambiente
 .env
 
-# IDEs
+# IDEs e ficheiros locais
 .vscode/
 .idea/
-
-# Claude Code
 .claude/
 CLAUDE.md

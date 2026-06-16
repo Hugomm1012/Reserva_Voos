@@ -47,11 +47,12 @@ class ReservaForm(forms.ModelForm):
     """Formulário para criar/editar uma Reserva manualmente (admin)."""
     class Meta:
         model  = Reserva
-        fields = ['voo', 'passageiro', 'numero_assento', 'status']
+        fields = ['voo', 'passageiro', 'numero_assento', 'classe_voo', 'status']
         widgets = {
             'voo':            forms.Select(attrs={'class': 'select'}),
             'passageiro':     forms.Select(attrs={'class': 'select'}),
             'numero_assento': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Ex: 1A'}),
+            'classe_voo':     forms.Select(attrs={'class': 'select'}),
             'status':         forms.Select(attrs={'class': 'select'}),
         }
 
@@ -73,3 +74,12 @@ class RegisterForm(UserCreationForm):
         self.fields['email'].widget.attrs.update({'class': 'input', 'placeholder': 'O seu e-mail'})
         self.fields['password1'].widget.attrs.update({'class': 'input', 'placeholder': 'Password'})
         self.fields['password2'].widget.attrs.update({'class': 'input', 'placeholder': 'Confirmar password'})
+        self.fields['email'].required = True
+
+    def clean_email(self):
+        # Garante que não há dois utilizadores com o mesmo email — essencial,
+        # pois a ligação Utilizador → Passageiro (AccountView) é feita por email.
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Já existe uma conta registada com este e-mail.')
+        return email

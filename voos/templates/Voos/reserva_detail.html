@@ -17,6 +17,7 @@
             <div class="summary-row"><span class="summary-label">Partida:</span><span class="summary-value">{{ reserva.voo.data_partida|date:"d/m/Y H:i" }}</span></div>
             <div class="summary-row"><span class="summary-label">Passageiro:</span><span class="summary-value">{{ reserva.passageiro.nome }}</span></div>
             <div class="summary-row"><span class="summary-label">Assento:</span><span class="summary-value">{{ reserva.numero_assento }}</span></div>
+            <div class="summary-row"><span class="summary-label">Classe:</span><span class="summary-value">{{ reserva.get_classe_voo_display }}</span></div>
             <div class="summary-row"><span class="summary-label">Data de reserva:</span><span class="summary-value">{{ reserva.data_reserva|date:"d/m/Y H:i" }}</span></div>
             <div class="summary-row"><span class="summary-label">Preço:</span><span class="summary-value">{{ reserva.voo.preco }}€</span></div>
         </div>

@@ -91,11 +91,16 @@ class Reserva(models.Model):
         ('confirmada', 'Confirmada'),
         ('cancelada',  'Cancelada'),
     ]
+    CLASSE = [
+        ('económica', 'Económica'),
+        ('executiva', 'Executiva'),
+    ]
     voo            = models.ForeignKey(Voo, on_delete=models.CASCADE)
     passageiro     = models.ForeignKey(Passageiro, on_delete=models.CASCADE)
     data_reserva   = models.DateTimeField(auto_now_add=True)
     status         = models.CharField(max_length=20, choices=STATUS, default='pendente')
     numero_assento = models.CharField(max_length=5)  # Ex: 12A
+    classe_voo     = models.CharField(max_length=20, choices=CLASSE, default='económica')
 
     def __str__(self):
         return f"{self.passageiro.nome} - {self.voo.numero}"

@@ -15,12 +15,25 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views import View
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from .models import Voo, Passageiro, Reserva
 from .forms import VooForm, PassageiroForm, ReservaForm, RegisterForm
+
+
+def _next_url_seguro(request):
+    """Devolve o parâmetro 'next' (POST ou GET) se for um destino seguro
+    para redirecionamento, caso contrário devolve None.
+    """
+    next_url = request.POST.get('next') or request.GET.get('next')
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        return next_url
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -98,6 +111,11 @@ class VooCreateView(LoginRequiredMixin, CreateView):
     success_url  = reverse_lazy('voos:flights')
     login_url    = reverse_lazy('voos:login')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Voo {self.object.numero} criado com sucesso.')
+        return response
+
 
 class VooUpdateView(LoginRequiredMixin, UpdateView):
     """Editar um voo existente (requer login)."""
@@ -109,6 +127,11 @@ class VooUpdateView(LoginRequiredMixin, UpdateView):
     success_url    = reverse_lazy('voos:flights')
     login_url      = reverse_lazy('voos:login')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Voo {self.object.numero} atualizado com sucesso.')
+        return response
+
 
 class VooDeleteView(LoginRequiredMixin, DeleteView):
     """Eliminar um voo (requer login). Mostra página de confirmação antes de apagar."""
@@ -118,6 +141,12 @@ class VooDeleteView(LoginRequiredMixin, DeleteView):
     slug_url_kwarg = 'numero'
     success_url    = reverse_lazy('voos:flights')
     login_url      = reverse_lazy('voos:login')
+
+    def form_valid(self, form):
+        numero = self.get_object().numero
+        response = super().form_valid(form)
+        messages.success(self.request, f'Voo {numero} eliminado com sucesso.')
+        return response
 
 
 # ---------------------------------------------------------------------------
@@ -149,6 +178,11 @@ class PassageiroCreateView(LoginRequiredMixin, CreateView):
     success_url   = reverse_lazy('voos:passageiro-list')
     login_url     = reverse_lazy('voos:login')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Passageiro {self.object.nome} criado com sucesso.')
+        return response
+
 
 class PassageiroUpdateView(LoginRequiredMixin, UpdateView):
     """Editar um passageiro existente."""
@@ -158,6 +192,11 @@ class PassageiroUpdateView(LoginRequiredMixin, UpdateView):
     success_url   = reverse_lazy('voos:passageiro-list')
     login_url     = reverse_lazy('voos:login')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Passageiro {self.object.nome} atualizado com sucesso.')
+        return response
+
 
 class PassageiroDeleteView(LoginRequiredMixin, DeleteView):
     """Eliminar um passageiro."""
@@ -165,6 +204,12 @@ class PassageiroDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'Voos/passageiro_confirm_delete.html'
     success_url   = reverse_lazy('voos:passageiro-list')
     login_url     = reverse_lazy('voos:login')
+
+    def form_valid(self, form):
+        nome = self.get_object().nome
+        response = super().form_valid(form)
+        messages.success(self.request, f'Passageiro {nome} eliminado com sucesso.')
+        return response
 
 
 # ---------------------------------------------------------------------------
@@ -196,6 +241,11 @@ class ReservaCreateView(LoginRequiredMixin, CreateView):
     success_url   = reverse_lazy('voos:reserva-list')
     login_url     = reverse_lazy('voos:login')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Reserva #{self.object.pk} criada com sucesso.')
+        return response
+
 
 class ReservaUpdateView(LoginRequiredMixin, UpdateView):
     """Editar uma reserva existente (admin)."""
@@ -204,6 +254,11 @@ class ReservaUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'Voos/reserva_form.html'
     success_url   = reverse_lazy('voos:reserva-list')
     login_url     = reverse_lazy('voos:login')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Reserva #{self.object.pk} atualizada com sucesso.')
+        return response
 
 
 class ReservaDeleteView(LoginRequiredMixin, DeleteView):
@@ -215,11 +270,14 @@ class ReservaDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         reserva = self.get_object()
+        pk = reserva.pk
         if reserva.status != 'cancelada':
             voo = reserva.voo
             voo.lugares_disponiveis += 1
             voo.save()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f'Reserva #{pk} cancelada com sucesso.')
+        return response
 
 
 class ReservaConfirmView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -238,6 +296,7 @@ class ReservaConfirmView(LoginRequiredMixin, UserPassesTestMixin, View):
         reserva = get_object_or_404(Reserva, pk=pk)
         reserva.status = 'confirmada'
         reserva.save()
+        messages.success(request, f'Reserva #{reserva.pk} confirmada.')
         return redirect('voos:admin-panel')
 
 
@@ -257,6 +316,7 @@ class ReservaCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
             voo.save()
         reserva.status = 'cancelada'
         reserva.save()
+        messages.success(request, f'Reserva #{reserva.pk} cancelada.')
         return redirect('voos:admin-panel')
 
 
@@ -279,11 +339,14 @@ class VoosLoginView(LoginView):
         return form
 
     def get_success_url(self):
-        return reverse_lazy('voos:account')
+        # Respeita o parâmetro 'next' (ex: veio de /reservar/TP123/ sem sessão iniciada).
+        # Se não houver destino seguro, volta à área do cliente por defeito.
+        return _next_url_seguro(self.request) or reverse_lazy('voos:account')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['register_form'] = RegisterForm()  # Formulário de registo no mesmo template
+        ctx['next']          = self.request.GET.get('next', '')
         return ctx
 
 
@@ -299,7 +362,7 @@ class RegisterView(View):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('voos:account')
+            return redirect(_next_url_seguro(request) or 'voos:account')
 
         # Validação falhou — volta ao template com o formulário de login também
         from django.contrib.auth.forms import AuthenticationForm
@@ -310,6 +373,7 @@ class RegisterView(View):
             'form':          login_form,
             'register_form': form,
             'show_register': True,  # Abre o painel de registo em vez do de login
+            'next':          request.POST.get('next', ''),
         })
 
 
@@ -322,17 +386,19 @@ class VoosLogoutView(LogoutView):
 # ÁREA DO CLIENTE
 # ---------------------------------------------------------------------------
 
-class AccountView(LoginRequiredMixin, TemplateView):
-    """Página pessoal do cliente: mostra as suas reservas.
+class AccountView(LoginRequiredMixin, View):
+    """Página pessoal do cliente: mostra as suas reservas e os dados de acesso.
 
     Liga o utilizador Django (request.user) ao Passageiro pelo email.
     Se não existir Passageiro com esse email, mostra lista vazia.
+
+    POST: trata a atualização do e-mail e a alteração da password,
+    distinguidas pelo campo escondido 'form_type'.
     """
     template_name = 'Voos/account.html'
     login_url     = reverse_lazy('voos:login')
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
+    def get_context(self, **extra):
         try:
             # Encontra o Passageiro cujo email corresponde ao utilizador autenticado
             passageiro = Passageiro.objects.get(email=self.request.user.email)
@@ -341,8 +407,42 @@ class AccountView(LoginRequiredMixin, TemplateView):
             ).order_by('-data_reserva')
         except Passageiro.DoesNotExist:
             reservas = Reserva.objects.none()
-        ctx['reservas'] = reservas
+        ctx = {'reservas': reservas}
+        ctx.update(extra)
         return ctx
+
+    def get(self, request):
+        return render(request, self.template_name, self.get_context())
+
+    def post(self, request):
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'update_email':
+            novo_email = request.POST.get('email', '').strip()
+            if not novo_email:
+                return render(request, self.template_name, self.get_context(
+                    dados_errors=['O e-mail não pode estar vazio.'], show_dados=True, show_email_form=True,
+                ))
+            request.user.email = novo_email
+            request.user.save()
+            return render(request, self.template_name, self.get_context(
+                dados_success='E-mail atualizado com sucesso.', show_dados=True,
+            ))
+
+        if form_type == 'change_password':
+            form = PasswordChangeForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, form.user)
+                return render(request, self.template_name, self.get_context(
+                    dados_success='Password alterada com sucesso.', show_dados=True,
+                ))
+            return render(request, self.template_name, self.get_context(
+                dados_errors=[e for errs in form.errors.values() for e in errs],
+                show_dados=True, show_password_form=True,
+            ))
+
+        return redirect('voos:account')
 
 
 # ---------------------------------------------------------------------------
@@ -374,6 +474,7 @@ class BookingView(LoginRequiredMixin, View):
         telefone       = request.POST.get('telefone', '').strip()
         documento      = request.POST.get('documento', '').strip()
         numero_assento = request.POST.get('numero_assento', '').strip()
+        classe_voo     = request.POST.get('classe_voo', 'económica')
 
         # Validação manual (campos obrigatórios + assento disponível)
         errors = []
@@ -391,7 +492,7 @@ class BookingView(LoginRequiredMixin, View):
                 'voo': voo, 'errors': errors,
                 'nome': nome, 'email': email,
                 'telefone': telefone, 'documento': documento,
-                'numero_assento': numero_assento,
+                'numero_assento': numero_assento, 'classe_voo': classe_voo,
             })
 
         # Cria o Passageiro se ainda não existir (identifica pelo email)
@@ -407,19 +508,21 @@ class BookingView(LoginRequiredMixin, View):
                     'voo': voo,
                     'errors': ['Erro ao criar o passageiro. O número de documento pode já estar registado.'],
                     'nome': nome, 'email': email, 'telefone': telefone,
-                    'documento': documento, 'numero_assento': numero_assento,
+                    'documento': documento, 'numero_assento': numero_assento, 'classe_voo': classe_voo,
                 })
 
         # Cria a reserva e reduz os lugares disponíveis
-        Reserva.objects.create(
+        reserva = Reserva.objects.create(
             voo=voo,
             passageiro=passageiro,
             numero_assento=numero_assento,
+            classe_voo=classe_voo,
             status='pendente',
         )
         voo.lugares_disponiveis -= 1
         voo.save()
 
+        messages.success(request, f'Reserva #{reserva.pk} criada com sucesso. Fica pendente de confirmação.')
         return redirect('voos:account')
 
 
