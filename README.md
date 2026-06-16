@@ -1,4 +1,4 @@
-# FlyMaster Airlines ✈️
+# FlyMaster Airlines 
 
 Sistema de reserva de voos desenvolvido em Django, como projeto académico da unidade curricular de Programação 2.
 
@@ -12,7 +12,7 @@ Sistema de reserva de voos desenvolvido em Django, como projeto académico da un
 - Reserva de voos com seleção de assento
 - Área de conta com histórico de reservas
 - Painel de administração para gestores (confirmar/cancelar reservas, gerir voos)
-- Separação de permissões por grupos (`gestor` / utilizador normal)
+- Separação de permissões por grupos (`superuser` / utilizador normal)
 - Paginação nas listas de voos, passageiros e reservas
 - Página 404 personalizada
 
@@ -77,15 +77,15 @@ python manage.py runserver
 
 ## Permissões
 
+
 | Grupo | Acesso |
 |---|---|
-| Superuser | Django admin (`/admin/`) |
-| `gestor` | Painel HTML (`/admin-painel/`) — confirmar/cancelar reservas, gerir voos |
+| Superuser | Django admin (`/admin/`) + Painel HTML (`/admin-painel/`) — confirmar/cancelar reservas, gerir voos |
 | Utilizador normal | Pesquisa de voos e área de conta (`/conta/`) |
 
 ## Contas de teste
 
 | Utilizador | Password | Tipo |
 |---|---|---|
-| `admin` | `Admin123!!` | Superuser / gestor |
+| `admin` | `Admin123!!` | Superuser |
 | `Teste_1` | `passteste123` | Utilizador normal |
