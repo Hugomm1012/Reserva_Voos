@@ -1,11 +1,3 @@
-"""
-forms.py — Formulários Django
-==============================
-Define os formulários usados nas views de criação e edição.
-Cada ModelForm mapeia diretamente para um modelo da base de dados.
-Os widgets adicionam a classe CSS 'input'/'select' para estilização.
-"""
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -13,7 +5,9 @@ from .models import Voo, Passageiro, Reserva
 
 
 class VooForm(forms.ModelForm):
-    """Formulário para criar/editar um Voo (admin)."""
+    """
+    Formulário para criar/editar um Voo (admin).
+    """
     class Meta:
         model  = Voo
         fields = ['numero', 'companhia', 'origem', 'destino',
@@ -31,7 +25,9 @@ class VooForm(forms.ModelForm):
 
 
 class PassageiroForm(forms.ModelForm):
-    """Formulário para criar/editar um Passageiro."""
+    """
+    Formulário para criar/editar um Passageiro.
+    """
     class Meta:
         model  = Passageiro
         fields = ['nome', 'email', 'telefone', 'documento']
@@ -44,7 +40,9 @@ class PassageiroForm(forms.ModelForm):
 
 
 class ReservaForm(forms.ModelForm):
-    """Formulário para criar/editar uma Reserva manualmente (admin)."""
+    """
+    Formulário para criar/editar uma Reserva manualmente (admin).
+    """
     class Meta:
         model  = Reserva
         fields = ['voo', 'passageiro', 'numero_assento', 'classe_voo', 'status']
@@ -58,7 +56,8 @@ class ReservaForm(forms.ModelForm):
 
 
 class RegisterForm(UserCreationForm):
-    """Formulário de registo de nova conta de utilizador.
+    """
+    Formulário de registo de nova conta de utilizador.
 
     Estende o UserCreationForm do Django para incluir email
     e aplicar a classe CSS 'input' a todos os campos.

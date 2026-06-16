@@ -82,3 +82,10 @@ python manage.py runserver
 | Superuser | Django admin (`/admin/`) |
 | `gestor` | Painel HTML (`/admin-painel/`) — confirmar/cancelar reservas, gerir voos |
 | Utilizador normal | Pesquisa de voos e área de conta (`/conta/`) |
+
+## Contas de teste
+
+| Utilizador | Password | Tipo |
+|---|---|---|
+| `admin` | `Admin123!!` | Superuser / gestor |
+| `Teste_1` | `passteste123` | Utilizador normal |

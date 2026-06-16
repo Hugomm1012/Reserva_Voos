@@ -1,20 +1,11 @@
-"""
-models.py — Modelos da base de dados
-=====================================
-Define as tabelas (entidades) do projeto.
-Django cria as tabelas automaticamente no SQLite com base nestas classes.
-
-Relações:
-  Companhia  ←──┐
-  Aeroporto  ←──┤── Voo ──→ Reserva ←── Passageiro
-"""
-
 from django.db import models
 from django.urls import reverse_lazy
 
+# Companhia e Aeroporto são só tabelas de apoio (dados que o Voo precisa).
+# A relação principal é: Voo <- Reserva -> Passageiro.
+
 
 class Companhia(models.Model):
-    """Companhia aérea que opera os voos (ex: TAP, Ryanair)."""
     nome = models.CharField(max_length=100)
     logo = models.ImageField(upload_to='logos/', blank=True, null=True)
 
@@ -26,12 +17,12 @@ class Companhia(models.Model):
 
 
 class Aeroporto(models.Model):
-    """Aeroporto de origem ou destino de um voo.
-
-    O campo 'codigo' segue o padrão IATA de 3 letras (ex: LIS, LHR, CDG).
     """
-    codigo = models.CharField(max_length=3, unique=True)  # Código IATA: LIS, LHR, CDG...
-    nome   = models.CharField(max_length=150, blank=True) # Nome completo (opcional)
+    Aeroporto. 
+    O 'codigo' é o código IATA.
+    """
+    codigo = models.CharField(max_length=3, unique=True)
+    nome   = models.CharField(max_length=150, blank=True)
     cidade = models.CharField(max_length=100)
     pais   = models.CharField(max_length=100)
 
@@ -40,12 +31,12 @@ class Aeroporto(models.Model):
 
 
 class Voo(models.Model):
-    """Voo disponível para reserva.
-
-    Um voo tem uma companhia, uma origem e um destino (ambos Aeroportos).
-    O campo 'lugares_disponiveis' é decrementado cada vez que uma reserva é criada.
     """
-    numero               = models.CharField(max_length=10, unique=True)     # Ex: TP123
+    Um voo. Tem 2 FKs para Aeroporto (origem/destino), por isso preciso
+    de related_name diferente em cada uma — senão o Django não sabe separar
+    'voos que partem daqui' de 'voos que chegam aqui'.
+    """
+    numero               = models.CharField(max_length=10, unique=True)  # ex: TP123
     companhia            = models.ForeignKey(Companhia, on_delete=models.CASCADE)
     origem               = models.ForeignKey(Aeroporto, on_delete=models.CASCADE, related_name='saidas')
     destino              = models.ForeignKey(Aeroporto, on_delete=models.CASCADE, related_name='chegadas')
@@ -62,15 +53,15 @@ class Voo(models.Model):
 
 
 class Passageiro(models.Model):
-    """Pessoa que faz reservas.
-
-    O email é único e é usado para ligar o Passageiro à conta do utilizador Django.
-    Ver AccountView e BookingView em views.py.
+    """
+    A pessoa que viaja — separado do User (login) porque um gestor pode
+    criar uma reserva para alguém sem conta no site. 
+    Liga-se à área de conta do cliente pelo email (ver AccountView).
     """
     nome         = models.CharField(max_length=100)
-    email        = models.EmailField(unique=True)        # Chave de ligação ao User do Django
+    email        = models.EmailField(unique=True)
     telefone     = models.CharField(max_length=15)
-    documento    = models.CharField(max_length=20, unique=True)  # Passaporte ou BI
+    documento    = models.CharField(max_length=20, unique=True) 
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -81,10 +72,10 @@ class Passageiro(models.Model):
 
 
 class Reserva(models.Model):
-    """Reserva de um assento num voo por um passageiro.
+    """
+    Liga um Passageiro a um Voo (e a um lugar específico).
 
-    O status começa em 'pendente' e pode ser confirmado ou cancelado pelo staff.
-    A combinação (voo, numero_assento) é única — dois passageiros não podem ter o mesmo assento.
+    unique_together garante que ninguém reserva o mesmo lugar duas vezes.
     """
     STATUS = [
         ('pendente',   'Pendente'),
@@ -99,7 +90,7 @@ class Reserva(models.Model):
     passageiro     = models.ForeignKey(Passageiro, on_delete=models.CASCADE)
     data_reserva   = models.DateTimeField(auto_now_add=True)
     status         = models.CharField(max_length=20, choices=STATUS, default='pendente')
-    numero_assento = models.CharField(max_length=5)  # Ex: 12A
+    numero_assento = models.CharField(max_length=5)  # ex: 12A
     classe_voo     = models.CharField(max_length=20, choices=CLASSE, default='económica')
 
     def __str__(self):
@@ -109,5 +100,4 @@ class Reserva(models.Model):
         return reverse_lazy('voos:reserva-detail', kwargs={'pk': self.pk})
 
     class Meta:
-        # Garante que um assento só pode ser reservado uma vez por voo
         unique_together = ('voo', 'numero_assento')

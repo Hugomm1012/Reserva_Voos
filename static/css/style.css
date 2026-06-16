@@ -1,14 +1,6 @@
-/* =====================================================
-   FLYMASTER AIRLINES — Folha de estilos principal
-   Projeto: Reserva de Voos | Programação 2
-   ===================================================== */
+/* FLYMASTER AIRLINES — Folha de estilos principal */
 
-
-/* =====================================================
-   VARIÁVEIS GLOBAIS
-   Cores, sombras e medidas usadas em todo o site.
-   Alterar aqui afeta o tema inteiro.
-   ===================================================== */
+/* VARIÁVEIS GLOBAIS */
 :root {
     --bg: #e2e2e2;                              /* Fundo geral da página */
     --surface: #ffffff;                          /* Fundo de cards e painéis */
@@ -32,11 +24,7 @@
     --max-width: 1200px;                         /* Largura máxima do conteúdo */
 }
 
-
-/* =====================================================
-   RESET GLOBAL
-   Remove margens e padding padrão do browser.
-   ===================================================== */
+/* RESET GLOBAL */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -56,11 +44,7 @@ body {
     margin: 0 auto;
 }
 
-
-/* =====================================================
-   HEADER / NAVEGAÇÃO
-   Barra superior fixa com o logo e links de navegação.
-   ===================================================== */
+/* HEADER / NAVEGAÇÃO */
 .site-header {
     background: var(--primary);
     color: white;
@@ -153,11 +137,7 @@ body {
     text-decoration: none;
 }
 
-
-/* =====================================================
-   HERO (secção principal da homepage)
-   Card com o formulário de pesquisa de voos.
-   ===================================================== */
+/* HERO (secção principal da homepage) */
 .hero {
     padding: 2rem 0;
 }
@@ -210,11 +190,7 @@ body {
     border-color: var(--primary);
 }
 
-
-/* =====================================================
-   FORMULÁRIOS
-   Grelha de pesquisa, inputs, selects e botões.
-   ===================================================== */
+/* FORMULÁRIOS */
 
 /* Grelha responsiva para campos de pesquisa */
 .search-grid {
@@ -263,12 +239,7 @@ body {
     text-align: center;
 }
 
-
-/* =====================================================
-   BOTÕES
-   Variantes: primary (azul), light (cinzento), accent,
-   large, small e back.
-   ===================================================== */
+/* BOTÕES */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -356,10 +327,7 @@ body {
     fill: none;
 }
 
-
-/* =====================================================
-   SECÇÕES GENÉRICAS (homepage)
-   ===================================================== */
+/* SECÇÕES GENÉRICAS (homepage) */
 .section {
     padding: 2rem 0;
 }
@@ -377,11 +345,7 @@ body {
     color: var(--muted);
 }
 
-
-/* =====================================================
-   DESTINOS POPULARES (homepage)
-   Grelha de 4 cards com imagem + info.
-   ===================================================== */
+/* DESTINOS POPULARES (homepage) */
 .destinations-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -427,11 +391,7 @@ body {
     margin-bottom: 0.8rem;
 }
 
-
-/* =====================================================
-   FEATURES (homepage)
-   Grelha de 3 cards com ícone + texto.
-   ===================================================== */
+/* FEATURES (homepage) */
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -454,11 +414,7 @@ body {
 .feature-card h3 { margin-bottom: 0.5rem; }
 .feature-card p  { color: var(--muted); font-size: 0.9rem; }
 
-
-/* =====================================================
-   LISTA DE VOOS (flights.html)
-   Cada voo aparece como um card horizontal.
-   ===================================================== */
+/* LISTA DE VOOS (flights.html) */
 .flights-list {
     display: flex;
     flex-direction: column;
@@ -508,11 +464,7 @@ body {
 .price-value  { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
 .price-detail { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.8rem; }
 
-
-/* =====================================================
-   PAINEL DE PESQUISA (flights.html)
-   Formulário de filtro no topo da lista de voos.
-   ===================================================== */
+/* PAINEL DE PESQUISA (flights.html) */
 .search-panel {
     background: var(--surface);
     padding: 1.5rem;
@@ -533,11 +485,7 @@ body {
     margin-bottom: 1.5rem;
 }
 
-
-/* =====================================================
-   RESERVA (booking.html)
-   Layout em duas colunas: formulário + sidebar de preço.
-   ===================================================== */
+/* RESERVA (booking.html) */
 .booking-grid {
     display: grid;
     grid-template-columns: 1fr 350px; /* Formulário | Sidebar */
@@ -548,11 +496,7 @@ body {
 .booking-main    { display: flex; flex-direction: column; gap: 1.5rem; }
 .booking-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 
-
-/* =====================================================
-   PAINEL / CARD GENÉRICO
-   Usado em quase todas as páginas.
-   ===================================================== */
+/* PAINEL / CARD GENÉRICO */
 .panel {
     background: var(--surface);
     border-radius: var(--radius);
@@ -578,10 +522,7 @@ body {
 .summary-label { font-weight: 500; color: var(--muted); }
 .summary-value { font-weight: 500; }
 
-
-/* =====================================================
-   RESUMO DE PREÇO (sidebar da reserva)
-   ===================================================== */
+/* RESUMO DE PREÇO (sidebar da reserva) */
 .price-summary {
     background: var(--surface-alt);
     border-radius: var(--radius);
@@ -611,11 +552,7 @@ body {
 .extras-box h3       { margin-bottom: 0.8rem; }
 .checkbox-label      { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0; cursor: pointer; }
 
-
-/* =====================================================
-   FORMULÁRIO DE PASSAGEIROS
-   Grelha de 2 colunas para campos lado a lado.
-   ===================================================== */
+/* FORMULÁRIO DE PASSAGEIROS */
 .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -635,11 +572,7 @@ body {
     font-size: 1rem;
 }
 
-
-/* =====================================================
-   DASHBOARD (conta do cliente e painel admin)
-   Layout em duas colunas: sidebar + conteúdo.
-   ===================================================== */
+/* DASHBOARD (conta do cliente e painel admin) */
 .dashboard-grid {
     display: grid;
     grid-template-columns: 260px 1fr; /* Sidebar fixa | Conteúdo flexível */
@@ -680,11 +613,7 @@ body {
 
 .content-stack { display: flex; flex-direction: column; gap: 1.5rem; }
 
-
-/* =====================================================
-   ESTATÍSTICAS (painel admin)
-   Grelha de 4 cards com número em destaque.
-   ===================================================== */
+/* ESTATÍSTICAS (painel admin) */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -702,11 +631,7 @@ body {
 .stats-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
 .stats-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
 
-
-/* =====================================================
-   TABELAS DE DADOS
-   Usadas no painel admin e listas de passageiros/reservas.
-   ===================================================== */
+/* TABELAS DE DADOS */
 .table-wrap  { overflow-x: auto; margin-top: 1rem; }
 
 .data-table  { width: 100%; border-collapse: collapse; }
@@ -721,11 +646,7 @@ body {
 .data-table th             { background: var(--surface-alt); font-weight: 600; }
 .data-table tr:hover td    { background: rgba(0, 0, 0, 0.02); }
 
-
-/* =====================================================
-   BADGES DE STATUS
-   Etiquetas coloridas: Confirmada, Pendente, Concluído.
-   ===================================================== */
+/* BADGES DE STATUS */
 .status-badge {
     display: inline-flex;
     padding: 0.3rem 0.8rem;
@@ -738,10 +659,7 @@ body {
 .status-pending   { background: var(--warning-bg); color: var(--warning-text); } /* Pendente/Cancelada */
 .status-info      { background: var(--info-bg);    color: var(--info-text);    } /* Concluído */
 
-
-/* =====================================================
-   CARDS DE RESERVA (conta do cliente)
-   ===================================================== */
+/* CARDS DE RESERVA (conta do cliente) */
 .booking-card {
     background: var(--surface-alt);
     border-radius: var(--radius);
@@ -772,11 +690,7 @@ body {
 .booking-details p { margin: 0; font-size: 0.9rem; }
 .booking-actions   { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
-
-/* =====================================================
-   AUTENTICAÇÃO (login.html)
-   Card centrado com formulário de login e registo.
-   ===================================================== */
+/* AUTENTICAÇÃO (login.html) */
 .auth-wrap { padding: 3rem 0; }
 
 .auth-card {
@@ -794,11 +708,7 @@ body {
 .form-grid    { display: flex; flex-direction: column; gap: 1rem; }
 .form-actions { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
 
-
-/* =====================================================
-   PAGINAÇÃO
-   Controlos de navegação entre páginas nas listas.
-   ===================================================== */
+/* PAGINAÇÃO */
 .page-btn {
     display: inline-flex;
     align-items: center;
@@ -827,21 +737,13 @@ body {
     font-weight: 600;
 }
 
-
-/* =====================================================
-   UTILITÁRIOS
-   Classes reutilizáveis em qualquer template.
-   ===================================================== */
+/* UTILITÁRIOS */
 hr           { margin: 1.5rem 0; border: none; border-top: 1px solid var(--border); }
 .page-actions{ display: flex; gap: 0.8rem; margin-bottom: 1rem; }
 .center      { text-align: center; }
 .muted       { color: var(--muted); }
 
-
-/* =====================================================
-   FOOTER
-   Barra inferior com informações da empresa.
-   ===================================================== */
+/* FOOTER */
 .site-footer {
     background: var(--surface-alt);
     border-top: 1px solid var(--border);
@@ -859,10 +761,7 @@ hr           { margin: 1.5rem 0; border: none; border-top: 1px solid var(--borde
     font-size: 0.85rem;
 }
 
-
-/* =====================================================
-   RESPONSIVO — Tablets (≤ 1024px)
-   ===================================================== */
+/* RESPONSIVO — Tablets (≤ 1024px) */
 @media (max-width: 1024px) {
     /* Passa de 4/3 colunas para 2 */
     .destinations-grid,
@@ -882,10 +781,7 @@ hr           { margin: 1.5rem 0; border: none; border-top: 1px solid var(--borde
     }
 }
 
-
-/* =====================================================
-   RESPONSIVO — Mobile (≤ 768px)
-   ===================================================== */
+/* RESPONSIVO — Mobile (≤ 768px) */
 @media (max-width: 768px) {
     .topbar {
         flex-direction: column;

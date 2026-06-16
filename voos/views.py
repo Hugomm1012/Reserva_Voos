@@ -1,15 +1,3 @@
-"""
-views.py — Lógica de negócio e controlo de páginas
-====================================================
-Cada classe View corresponde a uma URL definida em urls.py.
-Herança usada:
-  - ListView / DetailView / CreateView / UpdateView / DeleteView — CRUD genérico
-  - TemplateView — páginas que só mostram dados, sem formulário de modelo
-  - View        — lógica personalizada com GET e POST separados
-  - LoginRequiredMixin  — redireciona para login se não autenticado
-  - UserPassesTestMixin — restringe acesso com base numa condição (ex: is_staff)
-"""
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.views import View
@@ -27,8 +15,8 @@ from .forms import VooForm, PassageiroForm, ReservaForm, RegisterForm
 
 
 def _next_url_seguro(request):
-    """Devolve o parâmetro 'next' (POST ou GET) se for um destino seguro
-    para redirecionamento, caso contrário devolve None.
+    """Lê o 'next' do POST/GET e só o devolve se for seguro redirecionar
+    para lá (evita que alguém manipule o link para sair do site).
     """
     next_url = request.POST.get('next') or request.GET.get('next')
     if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
@@ -36,18 +24,14 @@ def _next_url_seguro(request):
     return None
 
 
-# ---------------------------------------------------------------------------
 # HOMEPAGE
-# ---------------------------------------------------------------------------
 
 class IndexView(TemplateView):
     """Página inicial com o formulário de pesquisa de voos."""
     template_name = 'Voos/index.html'
 
 
-# ---------------------------------------------------------------------------
 # VOO — CRUD completo
-# ---------------------------------------------------------------------------
 
 class VooListView(ListView):
     """Lista de voos disponíveis, com filtros por origem, destino e data.
@@ -149,9 +133,7 @@ class VooDeleteView(LoginRequiredMixin, DeleteView):
         return response
 
 
-# ---------------------------------------------------------------------------
 # PASSAGEIRO — CRUD completo
-# ---------------------------------------------------------------------------
 
 class PassageiroListView(LoginRequiredMixin, ListView):
     """Lista todos os passageiros registados (requer autenticação)."""
@@ -212,9 +194,7 @@ class PassageiroDeleteView(LoginRequiredMixin, DeleteView):
         return response
 
 
-# ---------------------------------------------------------------------------
 # RESERVA — CRUD completo
-# ---------------------------------------------------------------------------
 
 class ReservaListView(LoginRequiredMixin, ListView):
     """Lista todas as reservas (admin)."""
@@ -281,11 +261,7 @@ class ReservaDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class ReservaConfirmView(LoginRequiredMixin, UserPassesTestMixin, View):
-    """Confirma uma reserva — exclusivo para gestores.
-
-    Recebe POST com o pk da reserva, muda o status para 'confirmada'
-    e redireciona para o painel admin.
-    """
+    """Botão "Confirmar" no painel de gestão — só para gestores/superuser."""
     login_url = reverse_lazy('voos:login')
 
     def test_func(self):
@@ -301,7 +277,7 @@ class ReservaConfirmView(LoginRequiredMixin, UserPassesTestMixin, View):
 
 
 class ReservaCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
-    """Cancela uma reserva — exclusivo para gestores."""
+    """Botão "Cancelar" no painel de gestão — devolve o lugar ao voo."""
     login_url = reverse_lazy('voos:login')
 
     def test_func(self):
@@ -320,16 +296,14 @@ class ReservaCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('voos:admin-panel')
 
 
-# ---------------------------------------------------------------------------
 # AUTENTICAÇÃO
-# ---------------------------------------------------------------------------
 
 class VoosLoginView(LoginView):
-    """Página de login. Passa também o RegisterForm para o mesmo template
-    para que login e registo apareçam lado a lado.
+    """Login. Passo também o RegisterForm para o template, porque login
+    e registo aparecem lado a lado na mesma página.
     """
-    template_name            = 'Voos/login.html'
-    redirect_authenticated_user = True  # Se já estiver autenticado, redireciona direto
+    template_name                = 'Voos/login.html'
+    redirect_authenticated_user  = True
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -351,11 +325,8 @@ class VoosLoginView(LoginView):
 
 
 class RegisterView(View):
-    """Processa o formulário de registo de nova conta.
-
-    POST: valida RegisterForm, cria User, faz login automático e redireciona para /conta/.
-    Se a validação falhar, volta ao login.html com os erros e show_register=True
-    para que o painel de registo fique visível.
+    """Cria a conta, faz login logo a seguir, e volta ao login.html com o
+    painel de registo aberto se algo correr mal na validação.
     """
     def post(self, request):
         form = RegisterForm(request.POST)
@@ -382,18 +353,14 @@ class VoosLogoutView(LogoutView):
     next_page = reverse_lazy('voos:index')
 
 
-# ---------------------------------------------------------------------------
 # ÁREA DO CLIENTE
-# ---------------------------------------------------------------------------
 
 class AccountView(LoginRequiredMixin, View):
-    """Página pessoal do cliente: mostra as suas reservas e os dados de acesso.
+    """Minha conta: reservas do cliente + alterar email/password.
 
-    Liga o utilizador Django (request.user) ao Passageiro pelo email.
-    Se não existir Passageiro com esse email, mostra lista vazia.
-
-    POST: trata a atualização do e-mail e a alteração da password,
-    distinguidas pelo campo escondido 'form_type'.
+    O GET mostra a página. O POST trata os dois formulários da secção
+    "Dados pessoais" (email e password), distinguidos pelo campo
+    escondido 'form_type' — ver account.html.
     """
     template_name = 'Voos/account.html'
     login_url     = reverse_lazy('voos:login')
@@ -445,16 +412,12 @@ class AccountView(LoginRequiredMixin, View):
         return redirect('voos:account')
 
 
-# ---------------------------------------------------------------------------
 # RESERVAR UM VOO ESPECÍFICO
-# ---------------------------------------------------------------------------
 
 class BookingView(LoginRequiredMixin, View):
-    """Página e lógica de reserva de um voo.
-
-    GET:  mostra o formulário com os detalhes do voo.
-    POST: valida os dados do passageiro, cria Passageiro (se não existir),
-          cria Reserva, decrementa lugares_disponiveis e redireciona para /conta/.
+    """Reservar um voo. Não uso ModelForm aqui porque há lógica a mais
+    (criar o Passageiro se for novo, verificar lugar ocupado, etc) para
+    caber num form simples.
     """
     template_name = 'Voos/booking.html'
     login_url     = reverse_lazy('voos:login')
@@ -526,23 +489,10 @@ class BookingView(LoginRequiredMixin, View):
         return redirect('voos:account')
 
 
-# ---------------------------------------------------------------------------
 # PAINEL DE ADMINISTRAÇÃO PERSONALIZADO
-# ---------------------------------------------------------------------------
 
 class AdminPanelView(UserPassesTestMixin, TemplateView):
-    """Dashboard para gestores: estatísticas, reservas e lista de todos os voos.
-
-    Só acessível a utilizadores do grupo "gestor" ou superusers.
-    Passa ao template:
-      - voos_hoje          — número de voos que partem hoje
-      - reservas_ativas    — reservas pendentes + confirmadas
-      - checkin_pendente   — reservas ainda por confirmar
-      - reservas_pendentes — queryset com detalhes
-      - reservas_confirmadas — queryset com detalhes
-      - todos_voos         — todos os voos para a tabela de gestão
-      - total_passageiros  — contagem total de passageiros registados
-    """
+    """Painel de gestão — só para o grupo "gestor" ou superusers."""
     template_name = 'Voos/admin.html'
     login_url     = reverse_lazy('voos:login')
 
@@ -568,9 +518,7 @@ class AdminPanelView(UserPassesTestMixin, TemplateView):
         return ctx
 
 
-# ---------------------------------------------------------------------------
 # ERROS
-# ---------------------------------------------------------------------------
 
 def pagina_nao_encontrada(request, exception):
     """Handler para erros 404 — mostra uma página personalizada."""
